@@ -42,6 +42,54 @@ typedef struct {
     float   (*pathCostHeuristic)(void *fromNode, void *toNode, void *context);      // estimated cost to travel from the first node to the second node
 } ASPathNodeSource;
 
+struct __ASNeighborList {
+    const ASPathNodeSource *source;
+    size_t capacity;
+    size_t count;
+    float *costs;
+    void *nodeKeys;
+};
+
+struct __ASPath {
+    size_t nodeSize;
+    size_t count;
+    float cost;
+    int nodeKeys[];
+};
+
+typedef struct {
+    int isClosed:1;
+    int isOpen:1;
+    int isGoal:1;
+    int hasParent:1;
+    int hasEstimatedCost:1;
+    float estimatedCost;
+    float cost;
+    size_t openIndex;
+    size_t parentIndex;
+    int nodeKey[];
+} NodeRecord;
+
+struct __VisitedNodes {
+    const ASPathNodeSource *source;
+    void *context;
+    size_t nodeRecordsCapacity;
+    size_t nodeRecordsCount;
+    void *nodeRecords;
+    size_t *nodeRecordsIndex;           // array of nodeRecords indexes, kept sorted by nodeRecords[i]->nodeKey using source->nodeComparator
+    size_t openNodesCapacity;
+    size_t openNodesCount;
+    size_t *openNodes;                  // binary heap of nodeRecords indexes, sorted by the nodeRecords[i]->rank
+};
+typedef struct __VisitedNodes *VisitedNodes;
+
+typedef struct {
+    VisitedNodes nodes;
+    size_t index;
+} Node;
+
+static const Node NodeNull = {NULL, -1};
+
 void ASNeighborListAdd(ASNeighborList neighbors, void *node, float edgeCost);
 
 ASPath ASPathCreate(const ASPathNodeSource *nodeSource, void *context, void *startNode, void *goalNode);

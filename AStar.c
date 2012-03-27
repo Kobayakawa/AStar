@@ -31,56 +31,6 @@
 #include <math.h>
 #include <string.h>
 
-struct __ASNeighborList {
-    const ASPathNodeSource *source;
-    size_t capacity;
-    size_t count;
-    float *costs;
-    void *nodeKeys;
-};
-
-struct __ASPath {
-    size_t nodeSize;
-    size_t count;
-    float cost;
-    int nodeKeys[];
-};
-
-typedef struct {
-    int isClosed:1;
-    int isOpen:1;
-    int isGoal:1;
-    int hasParent:1;
-    int hasEstimatedCost:1;
-    float estimatedCost;
-    float cost;
-    size_t openIndex;
-    size_t parentIndex;
-    int nodeKey[];
-} NodeRecord;
-
-struct __VisitedNodes {
-    const ASPathNodeSource *source;
-    void *context;
-    size_t nodeRecordsCapacity;
-    size_t nodeRecordsCount;
-    void *nodeRecords;
-    size_t *nodeRecordsIndex;           // array of nodeRecords indexes, kept sorted by nodeRecords[i]->nodeKey using source->nodeComparator
-    size_t openNodesCapacity;
-    size_t openNodesCount;
-    size_t *openNodes;                  // binary heap of nodeRecords indexes, sorted by the nodeRecords[i]->rank
-};
-typedef struct __VisitedNodes *VisitedNodes;
-
-typedef struct {
-    VisitedNodes nodes;
-    size_t index;
-} Node;
-
-static const Node NodeNull = {NULL, -1};
-
-/********************************************/
-
 static inline VisitedNodes VisitedNodesCreate(const ASPathNodeSource *source, void *context)
 {
     VisitedNodes nodes = calloc(1, sizeof(struct __VisitedNodes));
@@ -382,6 +332,8 @@ void ASNeighborListAdd(ASNeighborList list, void *node, float edgeCost)
 
 ASPath ASPathCreate(const ASPathNodeSource *source, void *context, void *startNodeKey, void *goalNodeKey)
 {
+	size_t n = 0, i = 0;
+	
     if (!startNodeKey || !source || !goalNodeKey || !source->nodeComparator || !source->nodeNeighbors || !source->pathCostHeuristic) {
         return NULL;
     }
@@ -407,7 +359,7 @@ ASPath ASPathCreate(const ASPathNodeSource *source, void *context, void *startNo
         neighborList->count = 0;
         source->nodeNeighbors(neighborList, GetNodeKey(current), context);
 
-        for (size_t n=0; n<neighborList->count; n++) {
+        for (n=0; n<neighborList->count; n++) {
             const float cost = GetNodeCost(current) + NeighborListGetEdgeCost(neighborList, n);
             Node neighbor = GetNode(visitedNodes, NeighborListGetNodeKey(neighborList, n));
             
@@ -444,7 +396,7 @@ ASPath ASPathCreate(const ASPathNodeSource *source, void *context, void *startNo
         path->cost = GetNodeCost(current);
         
         n = current;
-        for (size_t i=count; i>0; i--) {
+        for (i=count; i>0; i--) {
             memcpy(path->nodeKeys + ((i - 1) * source->nodeSize), GetNodeKey(n), source->nodeSize);
             n = GetParentNode(n);
         }
