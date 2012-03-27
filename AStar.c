@@ -43,7 +43,7 @@ struct __ASPath {
     size_t nodeSize;
     size_t count;
     float cost;
-    int8_t nodeKeys[];
+    int nodeKeys[];
 };
 
 typedef struct {
@@ -56,7 +56,7 @@ typedef struct {
     float cost;
     size_t openIndex;
     size_t parentIndex;
-    int8_t nodeKey[];
+    int nodeKey[];
 } NodeRecord;
 
 struct __VisitedNodes {
