@@ -20,8 +20,7 @@ This implementation knows nothing about coordinates, grids, or anything spatial.
 
 ## How to compile
 
-Use <pre> gcc -c AStar.c -std=c99 -o AStar.o </pre> for compiling AStar.c.
-And use <pre> gcc main.c AStar.o -o AStar </pre> for compiling main program.
+Just use <pre> make </pre>
 
 
 ## Author
