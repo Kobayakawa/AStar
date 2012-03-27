@@ -18,6 +18,12 @@ ASPathNodeSource.pathCostHeuristic() must return the "best guess" for how far aw
 
 This implementation knows nothing about coordinates, grids, or anything spatial. It is up to you, by way of the callback functions, to indirectly supply this information to the algorithm when generating neighbors for a given node. The implementation makes no assumptions about the shape of your data or what you might be using it for.
 
+## How to compile
+
+Use <pre> gcc -c AStar.c -std=c99 -o AStar.o </pre> for compiling AStar.c.
+And use <pre> gcc main.c AStar.o -o AStar </pre> for compiling main program.
+
+
 ## Author
 
 Created by Sean Heber (Twitter: [@BigZaphod](http://twitter.com/BigZaphod/)).
