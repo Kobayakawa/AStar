@@ -3,7 +3,7 @@
 
 int main()
 {
-	Node deneme = NULL;
+	ASPath deneme = NULL;
 	printf("Hello World");
 	return 0;
 }
